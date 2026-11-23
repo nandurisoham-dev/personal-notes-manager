@@ -45,6 +45,8 @@ def get_notes(user_id):
         response.append(notes_to_dict(note))
     session.close()
 
+
+
     return {"code": 200 , "notes":response}
 
 

@@ -8,7 +8,7 @@ function App() {
   const [token , setToken] = useState("")
 
   function updateNotes(){
-      fetch(API_URL + "/packages" , {
+      fetch(API_URL + "/notes" , {
           headers : {
               'token' : token
           }
