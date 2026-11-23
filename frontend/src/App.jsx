@@ -1,8 +1,8 @@
 import { useState , useEffect } from 'react'
-import './App.css'
 import Main from "./pages/Main.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+import {Route, Routes} from "react-router";
 
 
 const API_URL = "http://localhost:8001"

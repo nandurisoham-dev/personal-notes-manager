@@ -1,5 +1,6 @@
 import { useState , useEffect } from 'react'
 
+const API_URL = "http://localhost:8001"
 
 function NoteForm({token,setNotes, updateToken}){
     const [title,setTitle] = useState("")

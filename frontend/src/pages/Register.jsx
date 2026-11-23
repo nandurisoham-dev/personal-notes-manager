@@ -5,7 +5,7 @@ const API_URL = "http://localhost:8001"
 function Register(){
       const [username, setUsername] = useState("");
       const [password, setPassword] = useState("");
-      const [userType, setUserType] = useState("");
+      const [email, setEmail] = useState("");
       const [registered, setRegistered] = useState(false);
 
       function handleUser(e) {    // function is an event handler used to update the component's state whenever someone types into the input field
@@ -16,11 +16,11 @@ function Register(){
          setPassword(e.target.value);
 
       }
-      function handleType(e) {    // function is an event handler used to update the component's state whenever someone types into the input field
-         setUserType(e.target.value);
+      function handleEmail(e) {    // function is an event handler used to update the component's state whenever someone types into the input field
+         setEmail(e.target.value);
       }
 
-      function register(username , password,user_type){
+      function register(username , password,email){
 
           fetch(API_URL + "/register", {
               method : 'POST',
@@ -28,7 +28,7 @@ function Register(){
               body: JSON.stringify({
                   "username":username,
                   "password":password,
-                  "user_type":user_type
+                  "email":email
               }),
           })
             .then((response) =>{if (response.ok){setRegistered(true)} return response.json()})
@@ -38,7 +38,7 @@ function Register(){
       function handleSubmit(e) {
         e.preventDefault(); // Prevents the page from refreshing on form submit
          // Pass the current RollNo state up to the parent component
-        register(username,password,userType);
+        register(username,password,email);
 
 
       }
@@ -48,7 +48,14 @@ function Register(){
     return (
 
         <form className="inline-form" onSubmit={handleSubmit}>
-          <label className="field">Enter your Username:
+          <label className="field">Enter your Email:
+            <input
+              type="text"
+              value={email}
+              onChange={handleEmail}
+            />
+          </label>
+            <label className="field">Enter your Username:
             <input
               type="text"
               value={username}
@@ -62,13 +69,7 @@ function Register(){
               onChange={handlePass}
             />
           </label>
-            <label className="filter">Type:
 
-            <select name="type" value={userType} onChange={handleType}>
-                <option value="dispatch">Dispatch</option>
-                <option value="package">Package</option>
-            </select>
-            </label>
           <button type='submit'>Register</button>
         </form>
     )
