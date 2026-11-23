@@ -12,9 +12,6 @@ engine = create_engine(f"sqlite:///{DB_PATH}")
 Base = declarative_base()
 
 
-USERNAME = "Sarang"
-
-PASSWORD = "Sarang8083"
 ACCESS_TOKEN_EXPIRY = 15
 REFRESH_TOKEN_EXPIRY = 7 * 24 * 60
 SECRET_KEY ="SECRET123"
