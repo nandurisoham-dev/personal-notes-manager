@@ -114,22 +114,20 @@ docker run -d -p 8001:8001 --name notes-app personal-notes-manager
 
 ## 6. Screenshots
 
-1. **Registration**
-   
-   *User registration page connecting to endpoint `A1` (`/register`).*
+![Registration Screen](screenshots/register.png)
+User registration page connected to `POST /register`.
 
-2. **Login**
-   
-   *User login page connecting to endpoint `A2` (`/login`) to generate JWT tokens.*
+![Login Screen](screenshots/login.png)
+User login page generating JWT access and refresh tokens via `POST /login`.
 
-3. **Dashboard**
-   
-   *Personal notes dashboard displaying user notes via `E1` and creating new notes via `E2`.*
+![Notes Dashboard](screenshots/dashboard.png)
+Authenticated personal notes dashboard displaying notes belonging exclusively to the logged-in user.
 
-4. **Endpoint Working in `/docs`**
-   
-   *Interactive Swagger UI (`/docs`) demonstrating a successful API endpoint execution.*
+![Error Message on Screen](screenshots/error.png)
+Validation/authentication error handling displayed on the UI (`401` / `409` / `422`).
 
-5. **Green GitHub Actions Run**
-   
-   *Passing CI/CD deployment pipeline run via `.github/workflows/deploy.yml`.*
+![Swagger API Docs](screenshots/docs.png)
+Endpoint tested and returning a valid response inside FastAPI `/docs`.
+
+![GitHub Actions Run](screenshots/github-action.png)
+Green CI/CD workflow execution in GitHub Actions (`.github/workflows/deploy.yml`).
