@@ -14,7 +14,7 @@
 
 ## 2. Live App
 
-* **EC2 Public Link:** `http://localhost:8001/docs`
+* **EC2 Public Link:** `http://13.204.161.143:8001/docs#/`
 
 ## 3. How to Run It
 
