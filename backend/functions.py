@@ -75,18 +75,18 @@ def verify_login(username, password):
         session.close()
         return False
     try:
-        ph.verify(user.password,password)
+        ph.verify(user.hashed_password,password)
     except VerifyMismatchError:
         session.close()
         return False
     session.close()
-    access_token = create_token(username=username, token_type="access")
-    refresh_token = create_token(username=username, token_type="refresh")
+    access_token = create_token(user_id=user.id, token_type="access")
+    refresh_token = create_token(user_id=user.id, token_type="refresh")
     return {"access_token": access_token, "refresh_token": refresh_token}
 
-def create_token(username, token_type):
+def create_token(user_id, token_type):
     payload = {
-        "username": username,
+        "user_id": user_id,
         'token_type': token_type,
         "exp": datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRY if token_type == "access" else REFRESH_TOKEN_EXPIRY)  # turnery expression
     }
@@ -112,7 +112,7 @@ def register_user(user_name:str,password:str,email:str | None=None):
     if user_exists is not None:
         session.close()
         return False
-    session.add(Users(user_name=user_name,password=ph.hash(password),email=email))
+    session.add(Users(user_name=user_name,hashed_password=ph.hash(password),email=email))
     session.commit()
     session.close()
     return True

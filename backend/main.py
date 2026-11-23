@@ -1,6 +1,7 @@
+from os import access
 from urllib import response
 
-from fastapi import FastAPI, HTTPException, Body
+from fastapi import FastAPI, HTTPException, Body, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -39,9 +40,15 @@ def login(user: UserLogin):
     return tokens
 
 @app.get("/notes")
-def get_all_notes( user_id : str):
+def get_all_notes(token = Header(None)):
+    user_id = functions.verify_token(token=token, token_type="access")["user_id"]
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid or expired token.")
     return functions.get_notes(user_id)["notes"]
 
 @app.post("/notes")
-def add_note(note : Note, user_id:str):
+def add_note(note : Note, token = Header(None)):
+    user_id = functions.verify_token(token=token, token_type="access")["user_id"]
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid or expired token.")
     return functions.create_note(user_id=user_id, title=note.title, content=note.content)
