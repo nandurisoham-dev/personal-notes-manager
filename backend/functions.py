@@ -21,8 +21,8 @@ ALGORITHM = "HS256"
 class Users(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key = True)
-    username = Column(String)
-    email = Column(String)
+    user_name = Column(String)
+    email = Column(String, nullable=True)
     hashed_password = Column(String)
     created_at = Column(DateTime, default = datetime.now())
 
@@ -79,20 +79,15 @@ def verify_login(username, password):
     except VerifyMismatchError:
         session.close()
         return False
-    if user.user_type:
-        user_type = user.user_type
-    else:
-        user_type = "user"
     session.close()
-    access_token = create_token(username=username, token_type="access",user_type=user_type)
-    refresh_token = create_token(username=username, token_type="refresh",user_type=user_type)
+    access_token = create_token(username=username, token_type="access")
+    refresh_token = create_token(username=username, token_type="refresh")
     return {"access_token": access_token, "refresh_token": refresh_token}
 
-def create_token(username, token_type,user_type="user"):
+def create_token(username, token_type):
     payload = {
         "username": username,
         'token_type': token_type,
-        'user_type': user_type,
         "exp": datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRY if token_type == "access" else REFRESH_TOKEN_EXPIRY)  # turnery expression
     }
     token = jwt.encode(payload=payload, key=SECRET_KEY, algorithm=ALGORITHM)
@@ -111,13 +106,13 @@ def verify_token(token,token_type):
 
 #--------- Users -----------
 
-def register_user(user_name:str,password:str,user_type:str="user"):
+def register_user(user_name:str,password:str,email:str | None=None):
     session = Session(engine)
     user_exists = session.query(Users).filter_by(user_name=user_name).first()
     if user_exists is not None:
         session.close()
         return False
-    session.add(Users(user_name=user_name,password=ph.hash(password),user_type=user_type))
+    session.add(Users(user_name=user_name,password=ph.hash(password),email=email))
     session.commit()
     session.close()
     return True
