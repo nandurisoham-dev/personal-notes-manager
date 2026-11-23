@@ -52,3 +52,14 @@ def add_note(note : Note, token = Header(None)):
     if not user_id:
         raise HTTPException(status_code=401, detail="Invalid or expired token.")
     return functions.create_note(user_id=user_id, title=note.title, content=note.content)
+
+@app.post("/refresh")
+def refresh(refresh_token):
+    payload = functions.verify_token(token=refresh_token,token_type="refresh")
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid or Expired Token")
+    user_id= payload.get("user_id")
+    email = payload.get("user_type","email")
+
+    access_token = functions.create_token(user_id=user_id,token_type="access")
+    return {"access_token":access_token}
