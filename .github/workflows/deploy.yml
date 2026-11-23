@@ -24,7 +24,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./backend
-          file: dockerfile
+          file: ./backend/dockerfile
           push: true
           tags: |
             ${{ env.IMAGE }}:latest
