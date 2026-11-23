@@ -1,7 +1,7 @@
 import { useState , useEffect } from 'react'
 
 
-function NoteForm({token,setNotes}){
+function NoteForm({token,setNotes, updateToken}){
     const [title,setTitle] = useState("")
     const [content,setContent] = useState("")
 
@@ -23,14 +23,14 @@ function NoteForm({token,setNotes}){
                   "content":content
                 })
         })
-            .then((response) => response.json())
+            .then((response) =>  { if (response.status === 401) {updateToken(); throw Error} return response.json()})
             .then(() => {
                 return fetch(API_URL + "/notes", {headers : {
               'token' : token
           }})
 
             })
-            .then((response) => response.json())
+            .then((response) =>  { if (response.status === 401) {updateToken(); throw Error} return response.json()})
             .then((data) => setNotes(data))
     }
 
