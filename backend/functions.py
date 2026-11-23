@@ -1,5 +1,5 @@
 from sqlalchemy import Integer, String, Column, create_engine, DateTime, ForeignKey
-from sqlalchemy.orm import Session, declarative_base
+from sqlalchemy.orm import Session, declarative_base, session
 from datetime import datetime, timedelta, timezone
 import jwt
 from argon2 import PasswordHasher
@@ -42,9 +42,22 @@ def get_notes(user_id):
     notes = session.query(Notes).filter(Notes.user_id == user_id).all()
     response = []
     for note in notes:
-        response.append(note)
+        response.append(notes_to_dict(note))
+    session.close()
 
     return {"code": 200 , "notes":response}
+
+
+def create_note(user_id , title , content):
+    session = Session(engine)
+    note = Notes(user_id=user_id , title=title , content=content)
+    session.add(note)
+    session.commit()
+    response = notes_to_dict(note)
+    session.close()
+    return {"code": 200 , "notes":response}
+
+
 
 
 def notes_to_dict(note : Notes):
