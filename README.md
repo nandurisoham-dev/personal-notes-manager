@@ -1,77 +1,135 @@
 # Personal Notes Manager
 
-Mini Project Notes
+## 1. Project and Team
 
----
+* **Project Name:** Personal Notes Manager
 
-## 📋 Problem Statement & Requirements
-* Users must register using a **username**, **email**, and **password**.
-* Registered users log in using their **email** and **password**.
-* After logging in, users can view their personal notes.
-* **Data Isolation:** Each user should only have access to their own notes.
-* **Authentication:** JWT (JSON Web Tokens) must be used with both **access** and **refresh** tokens.
-* **Security:** Passwords must be hashed before storing them in the database.
+* **Team Members & Responsibilities:**
 
----
+  * **Soham Nanduri:** Database table creation (`backend/functions.py`), Dockerization (`backend/dockerfile`), CI/CD workflow (`.github/workflows/deploy.yml`), and AWS EC2 management.
 
-## ⚙️ Tech Stack
-* **Backend:** Python
-* **Database:** SQLite (`notes.db`)
-* **Frontend:** React
+  * **Sarang Thilakan:** Authentication endpoints (`A1` - Register, `A2` - Login, `A3` - Refresh Token).
 
----
+  * **Shafi:** Notes endpoints (`E1` - Get Notes, `E2` - Create Note) and React frontend (`frontend/`).
 
-## 🗄️ Database Schema
-* **Database Name:** `notes`
-* **Database File:** `notes.db`
+## 2. Live App
+
+* **EC2 Public Link:** `http://localhost:8001/docs`
+
+## 3. How to Run It
+
+### Backend (Python + SQLite)
+
+```
+# Navigate to the backend directory
+cd backend
+
+# Create and activate a virtual environment
+python -m venv venv
+source venv/bin/activate        # On Windows use: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the FastAPI server on port 8001
+uvicorn main:app --host 127.0.0.1 --port 8001 --reload
+
+```
+
+### Frontend (React + Vite)
+
+```
+# Navigate to the frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
+```
+
+### Docker Container
+
+```
+# Navigate to the backend directory where the dockerfile is located
+cd backend
+
+# Build the Docker image
+docker build -t personal-notes-manager -f dockerfile .
+
+# Run the container mapping port 8001
+docker run -d -p 8001:8001 --name notes-app personal-notes-manager
+
+```
+
+## 4. API Contract
+
+### Endpoints Table
+
+| \# | What it does | Method | Path | Request Body / Auth | Success Code | 
+| ----- | ----- | ----- | ----- | ----- | ----- | 
+| **A1** | Register new user | `POST` | `/register` | `{"username": "", "email": "", "password": ""}` | `201` | 
+| **A2** | Login and generate JWT access and refresh token | `POST` | `/login` | `{"username": "", "password": ""}` *(or email)* | `200` | 
+| **A3** | Generate new access token using refresh token | `POST` | `/refresh` | `access_token` / Refresh token | `201` | 
+| **E1** | Get all notes belonging to logged-in user | `GET` | `/notes` | `access_token` (Auth Header) | `200` | 
+| **E2** | Create new note and associate it with logged-in user | `POST` | `/notes` | `access_token` + Note JSON body | `200` | 
+
+### Error Rules Table
+
+| Status Code | Error Type | Condition / Rule | 
+| ----- | ----- | ----- | 
+| **401** | Restricted Action / Unauthorized | Incorrect email or password, invalid or expired token (access/refresh), or accessing notes without authentication. | 
+| **409** | Conflict | Registering with an email that already exists in the database. | 
+| **422** | Unprocessable Entity | Missing or empty required fields, or invalid email format. | 
+
+## 5. Database
+
 * **Engine Used:** SQLite
 
-### 1. `users` Table
-| Column | Datatype | Constraint / Info |
-| :--- | :--- | :--- |
-| `id` | Integer | Primary Key (`Unique` + `Not Null`) |
-| `username` | String | — |
-| `email` | String | — |
-| `hashed_password` | String | — |
-| `created_at` | Datetime | `Default = sysdate` |
+* **Database Name:** `notes`
 
-### 2. `notes` Table
-| Column | Datatype | Constraint / Info |
-| :--- | :--- | :--- |
-| `id` | Integer | Primary Key |
-| `user_id` | Integer | Foreign Key referencing `users(id)` |
-| `title` | String | — |
-| `content` | String | — |
-| `created_at` | Datetime | `Default = sysdate` |
+* **File:** `notes.db` (initialized in `backend/functions.py`)
 
----
+### `users` Table
 
-## 🚀 API Endpoints
-The backend exposes 5 core API endpoints:
+| Column | Datatype | Constraint / Info | 
+| ----- | ----- | ----- | 
+| `id` | Integer | Primary Key (`Unique` + `Not null`) | 
+| `username` | String | — | 
+| `email` | String | — | 
+| `hashed_password` | String | — | 
+| `created_at` | Datetime | `Default = sysdate` | 
 
-| # | What it does | Method | Path | Request Body / Auth | Success Code |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **A1** | Register new user | `POST` | `/register` | `{"username": "", "email": "", "password": ""}` | `201` |
-| **A2** | Login and generate JWT access and refresh tokens | `POST` | `/login` | `{"username": "", "password": ""}` *(or email)* | `200` |
-| **A3** | Generate new access token using refresh token | `POST` | `/refresh` | Refresh / Access Token | `201` |
-| **E1** | Get all notes belonging to logged-in user | `GET` | `/notes` | Access Token | `200` |
-| **E2** | Create new note and associate it with logged-in user | `POST` | `/notes` | Access Token + Note Payload | `200` |
+### `notes` Table
 
----
+| Column | Datatype | Constraint / Info | 
+| ----- | ----- | ----- | 
+| `id` | Integer | Primary Key | 
+| `user_id` | Integer | Foreign Key referencing `users(id)` | 
+| `title` | String | — | 
+| `content` | String | — | 
+| `created_at` | Datetime | `Default = sysdate` | 
 
-## ⚠️ Error Handling
-* **`401` (Unauthorized / Restricted Action):** Incorrect email/password, invalid or expired token (access/refresh), or attempting to access notes without authentication.
-* **`409` (Conflict):** Attempting to register with an email that already exists.
-* **`422` (Unprocessable Entity):** Missing or empty required fields, or invalid email format.
+## 6. Screenshots
 
----
+1. **Registration**
+   
+   *User registration page connecting to endpoint `A1` (`/register`).*
 
-## 💻 Frontend Architecture (React)
-* **API Configuration:**
-  ```javascript
-  const API_URL = "http://127.0.0.1:8001"; // IP: 127.0.0.1, Port No.: 8001
-  ```
-* **Core Components** *(implemented in `App.jsx`)*:
-  1. **Registration** *(connects to Endpoint A1)*
-  2. **Login** *(connects to Endpoint A2)*
-  3. **Notes Dashboard** *(connects to Endpoint E1 & E2)*
+2. **Login**
+   
+   *User login page connecting to endpoint `A2` (`/login`) to generate JWT tokens.*
+
+3. **Dashboard**
+   
+   *Personal notes dashboard displaying user notes via `E1` and creating new notes via `E2`.*
+
+4. **Endpoint Working in `/docs`**
+   
+   *Interactive Swagger UI (`/docs`) demonstrating a successful API endpoint execution.*
+
+5. **Green GitHub Actions Run**
+   
+   *Passing CI/CD deployment pipeline run via `.github/workflows/deploy.yml`.*
